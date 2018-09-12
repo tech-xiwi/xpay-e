@@ -1,6 +1,8 @@
 package com.tech.xiwi.pay.wechat;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.tech.xiwi.pay.common.IPay;
@@ -20,6 +22,8 @@ public class WXPay implements IPay<JSONObject> {
     //上下文
     private Activity activity;
     private IWXAPI api;
+
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     private WXPay() {
 
@@ -148,7 +152,7 @@ public class WXPay implements IPay<JSONObject> {
     @Override
     public void pay(Activity activity, JSONObject param, PayCallback callback) {
         Log.d(TAG, "pay: ");
-        
+
         try {
             String appId = param.getString("appid");
             if (api == null) {
@@ -183,6 +187,15 @@ public class WXPay implements IPay<JSONObject> {
             }
             PayApi.isPaying = false;
             return;
+        } finally {
+            if (PayApi.isPaying && handler != null) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        PayApi.isPaying = false;
+                    }
+                }, 750);
+            }
         }
     }
 
