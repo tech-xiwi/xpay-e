@@ -156,7 +156,7 @@ public class WXPay implements IPay<JSONObject> {
                 api.registerApp(appId);
             }
 
-            if (!api.isWXAppSupportAPI()) {//微信版本过低请升级微信客户端
+            if (!api.isWXAppInstalled()) {//微信版本过低请升级微信客户端
                 Log.e(TAG, "pay: 微信版本过低请升级微信客户端!!!");
                 if (callback != null) {
                     callback.onFailed();
